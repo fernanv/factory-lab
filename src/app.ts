@@ -33,8 +33,7 @@ export function handle(store: NoteStore, req: Request): Response {
     return note ? { status: 200, body: note } : error(404, 'not_found');
   }
   if (req.method === 'DELETE') {
-    store.remove(id);
-    return { status: 204 };
+    return store.remove(id) ? { status: 204 } : error(404, 'not_found');
   }
   return error(405, 'method_not_allowed');
 }

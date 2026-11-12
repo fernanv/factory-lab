@@ -29,6 +29,24 @@ test('deletes a note', () => {
   assert.equal(handle(store, { method: 'GET', path: '/notes/1' }).status, 404);
 });
 
+test('C1: DELETE of a missing note returns 404 not_found', () => {
+  const store = new NoteStore();
+  assert.deepEqual(handle(store, { method: 'DELETE', path: '/notes/1' }), { status: 404, body: { error: 'not_found' } });
+  handle(store, { method: 'POST', path: '/notes', body: { title: 'x' } });
+  assert.deepEqual(handle(store, { method: 'DELETE', path: '/notes/99' }), { status: 404, body: { error: 'not_found' } });
+  assert.equal(handle(store, { method: 'DELETE', path: '/notes/1' }).status, 204);
+  assert.deepEqual(handle(store, { method: 'DELETE', path: '/notes/1' }), { status: 404, body: { error: 'not_found' } });
+});
+
+test('C2: DELETE of an existing note returns 204 and removes it', () => {
+  const store = new NoteStore();
+  handle(store, { method: 'POST', path: '/notes', body: { title: 'a' } });
+  handle(store, { method: 'POST', path: '/notes', body: { title: 'b' } });
+  assert.deepEqual(handle(store, { method: 'DELETE', path: '/notes/1' }), { status: 204 });
+  assert.equal(handle(store, { method: 'GET', path: '/notes/1' }).status, 404);
+  assert.deepEqual(store.notes.map((n) => n.id), [2]);
+});
+
 test('C1: rejects empty or whitespace-only titles without storing', () => {
   const store = new NoteStore();
   for (const title of ['', '   ', '\t\n ']) {
