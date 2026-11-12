@@ -18,8 +18,10 @@ export function handle(store: NoteStore, req: Request): Response {
     if (req.method === 'POST') {
       const input = req.body as { title?: unknown; body?: unknown } | null;
       if (!input || typeof input !== 'object' || typeof input.title !== 'string') return error(400, 'invalid_note');
+      const title = input.title.trim();
+      if (title === '') return error(400, 'invalid_note');
       const body = typeof input.body === 'string' ? input.body : '';
-      return { status: 201, body: store.add(input.title, body) };
+      return { status: 201, body: store.add(title, body) };
     }
     return error(405, 'method_not_allowed');
   }
