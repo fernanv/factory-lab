@@ -12,6 +12,6 @@ npm start    # http://localhost:3000
 | `GET /notes?limit=N` | newest first, at most `limit` notes (default 20) |
 | `POST /notes` | body `{ "title", "body" }` → 201 with the note |
 | `GET /notes/:id` | 200 with the note, or 404 |
-| `DELETE /notes/:id` | 204 |
+| `DELETE /notes/:id` | 204, or 404 |
 
 `main` is protected: changes arrive by pull request, with CI green and the owner's approval.
